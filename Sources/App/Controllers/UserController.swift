@@ -5,15 +5,51 @@ import FluentSQLite
 /// Creates new users and logs them in.
 final class UserController {
     /// Logs a user in, returning a token for accessing protected endpoints.
-    func login(_ req: Request) throws -> Future<UserToken> {
+    func login(_ req: Request) throws -> Future<Token> {
+        /*  
         // get user auth'd by basic auth middleware
         let user = try req.requireAuthenticated(User.self)
         
         // create new token for this user
-        let token = try UserToken.create(userID: user.requireID())
+        */
         
-        // save and return token
-        return token.save(on: req)
+        return try req.content.decode(LoginUserRequest.self).flatMap { user in
+        
+            return User.query(on: req).filter(\.email == user.email).first().flatMap { fetchedUser in
+            
+                guard let existingUser = fetchedUser else {
+                    throw Abort(HTTPStatus.notFound)
+                }
+                
+                let hasher = try req.make(BCryptDigest.self)
+                
+                if try hasher.verify(user.password, created: existingUser.password) {
+                
+                    return try Token.query(on: req)
+                        .filter(\Token.userID == existingUser.requireID())
+                        .delete(force: true).flatMap { _ in
+                
+                        let token = try Token.create(userID: existingUser.requireID())
+                
+                        // save and return token
+                        return token.save(on: req)
+                    
+                    }
+                
+                } else {
+                    throw Abort(HTTPStatus.unauthorized)
+                }
+                
+                
+            
+            }
+            
+            
+            
+        }
+        
+        
+       
     }
     
     /// Creates a new user.
@@ -28,7 +64,7 @@ final class UserController {
             // hash user's password using BCrypt
             let hash = try BCrypt.hash(user.password)
             // save new user
-            return User(id: nil, name: user.name, email: user.email, passwordHash: hash)
+            return User(id: nil, name: user.name, email: user.email, password: hash)
                 .save(on: req)
         }.map { user in
             // map to public user response (omits password hash)
@@ -52,6 +88,12 @@ struct CreateUserRequest: Content {
     
     /// User's password repeated to ensure they typed it correctly.
     var verifyPassword: String
+}
+
+/// Login Request Structure
+struct LoginUserRequest: Content {
+    var email: String
+    var password: String
 }
 
 /// Public representation of user data.

@@ -1,12 +1,12 @@
 import Authentication
 import Crypto
-import FluentSQLite
+import FluentPostgreSQL
 import Vapor
 
 /// An ephermal authentication token that identifies a registered user.
-final class UserToken: SQLiteModel {
+final class Token: PostgreSQLModel {
     /// Creates a new `UserToken` for a given user.
-    static func create(userID: User.ID) throws -> UserToken {
+    static func create(userID: User.ID) throws -> Token {
         // generate a random 128-bit, base64-encoded string.
         let string = try CryptoRandom().generateData(count: 16).base64EncodedString()
         // init a new `UserToken` from that string.
@@ -16,7 +16,7 @@ final class UserToken: SQLiteModel {
     /// See `Model`.
     static var deletedAtKey: TimestampKey? { return \.expiresAt }
     
-    /// UserToken's unique identifier.
+    /// Token's unique identifier.
     var id: Int?
     
     /// Unique token string.
@@ -38,45 +38,36 @@ final class UserToken: SQLiteModel {
     }
 }
 
-extension UserToken {
+extension Token {
     /// Fluent relation to the user that owns this token.
-    var user: Parent<UserToken, User> {
+    var user: Parent<Token, User> {
         return parent(\.userID)
     }
 }
 
 /// Allows this model to be used as a TokenAuthenticatable's token.
-extension UserToken: Token {
+extension Token: Authentication.Token {
     /// See `Token`.
     typealias UserType = User
     
     /// See `Token`.
-    static var tokenKey: WritableKeyPath<UserToken, String> {
+    static var tokenKey: WritableKeyPath<Token, String> {
         return \.string
     }
     
     /// See `Token`.
-    static var userIDKey: WritableKeyPath<UserToken, User.ID> {
+    static var userIDKey: WritableKeyPath<Token, User.ID> {
         return \.userID
     }
 }
 
 /// Allows `UserToken` to be used as a Fluent migration.
-extension UserToken: Migration {
-    /// See `Migration`.
-    static func prepare(on conn: SQLiteConnection) -> Future<Void> {
-        return SQLiteDatabase.create(UserToken.self, on: conn) { builder in
-            builder.field(for: \.id, isIdentifier: true)
-            builder.field(for: \.string)
-            builder.field(for: \.userID)
-            builder.field(for: \.expiresAt)
-            builder.reference(from: \.userID, to: \User.id)
-        }
-    }
+extension Token: Migration {
+  
 }
 
 /// Allows `UserToken` to be encoded to and decoded from HTTP messages.
-extension UserToken: Content { }
+extension Token: Content { }
 
 /// Allows `UserToken` to be used as a dynamic parameter in route definitions.
-extension UserToken: Parameter { }
+extension Token: Parameter { }
