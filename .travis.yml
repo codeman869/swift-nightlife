@@ -1,0 +1,13 @@
+os: linux
+language: generic
+sudo: required
+git:
+    depth: 3
+services: postgresql
+before_install:
+    - eval "$(curl -sL https://apt.vapor.sh)"; sudo apt-get update; sudo apt-get install swift vapor
+before_script:
+    - psql -c 'create database travis_ci_test;' -U postgres
+script: swift build && swift test
+
+

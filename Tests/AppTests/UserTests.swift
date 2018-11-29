@@ -12,6 +12,7 @@ class UserTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        
         app = try! Application.testable()
         
         conn = try! app.newConnection(to: .psql).wait()
@@ -22,7 +23,6 @@ class UserTests: XCTestCase {
     
     override func tearDown() {
         super.tearDown()
-        
         
         conn.close()
     }

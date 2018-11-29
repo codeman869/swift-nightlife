@@ -34,32 +34,7 @@ extension User: TokenAuthenticatable {
 }
 
 /// Allows `User` to be used as a Fluent migration.
-extension User: Migration {
-
-    static func prepare(on conn: PostgreSQLConnection) -> Future<Void> {
-        return PostgreSQLDatabase.update(User.self, on: conn) { builder in 
-            /*
-            builder.field(for: \.name)
-            builder.field(for: \.email)
-            builder.field(for: \.password)
-            builder.deleteField(for: \.username)
-            */
-            
-        
-        }
-    }
-    
-    static func revert(on conn: PostgreSQLConnection) -> Future<Void> {
-        return PostgreSQLDatabase.update(User.self, on: conn) { builder in 
-            /*
-        
-            builder.deleteField(for: \.name)
-            builder.deleteField(for: \.email)
-            */
-        
-        }
-    }
-}
+extension User: Migration { }
 
 /// Allows `User` to be encoded to and decoded from HTTP messages.
 extension User: Content { }
