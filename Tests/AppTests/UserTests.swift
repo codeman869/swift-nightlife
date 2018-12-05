@@ -40,9 +40,25 @@ class UserTests: XCTestCase {
         XCTAssertNotNil(userResponse.id)
         
     }
+    
+    func emailIDIsUnique() throws {
+    
+        let user = CreateUserRequest(name: usersName, email: email, password: password, verifyPassword: password)
+        
+        let response = try app.sendRequest(to: "/users", method: .POST, body: user)
+        
+        let userResponse = try response.content.decode(UserResponse.self).wait()
+        
+        let response2 = try app.sendRequest(to: "/users", method: .POST, body: user)
+        
+        
+        XCTAssertEqual(response2.http.status, HTTPStatus.badRequest)
+        XCTAssertThrowsError(try response2.content.decode(UserResponse.self).wait())
+    }
    
    
     static let allTests = [
         ("createSavesAUser", createSavesAUser),
+        ("emailIDIsUnique", emailIDIsUnique),
     ]
 }

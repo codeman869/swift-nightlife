@@ -34,7 +34,18 @@ extension User: TokenAuthenticatable {
 }
 
 /// Allows `User` to be used as a Fluent migration.
-extension User: Migration { }
+extension User: Migration {
+
+    static func prepare(on conn: PostgreSQLConnection) -> Future<Void> {
+        return PostgreSQLDatabase.create(User.self, on: conn) { builder in
+        
+            try addProperties(to: builder)
+        
+            builder.unique(on: \.email)
+            
+        }
+    }
+}
 
 /// Allows `User` to be encoded to and decoded from HTTP messages.
 extension User: Content { }
