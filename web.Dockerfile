@@ -12,6 +12,7 @@ WORKDIR /app
 COPY . .
 RUN mkdir -p /build/lib && cp -R /usr/lib/swift/linux/*.so /build/lib
 RUN swift build -c release && mv `swift build -c release --show-bin-path` /build/bin
+#CMD ./build/bin/Run serve --env production --hostname 0.0.0.0 --port $PORT
 
 # Production image
 FROM ubuntu:16.04
@@ -27,4 +28,4 @@ COPY --from=builder /build/lib/* /usr/lib/
 # Uncommand the next line if you are using Leaf
 #COPY --from=builder /app/Resources ./Resources
 
-ENTRYPOINT ./Run serve --env $ENVIRONMENT --hostname 0.0.0.0 --port 80
+CMD ./Run serve --env $ENVIRONMENT --hostname 0.0.0.0 --port $PORT
