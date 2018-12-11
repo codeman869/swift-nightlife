@@ -8,6 +8,10 @@ public func routes(_ router: Router) throws {
     router.post("users", use: userController.create)
     router.post("login", use: userController.login)
     
+    
+    let barController = BarController()
+    router.get("bars", use: barController.getBars)
+    
     // basic / password auth protected routes
     /*
     let basic = router.grouped(User.basicAuthMiddleware(using: BCryptDigest()))
