@@ -25,7 +25,6 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     try databases(config: &databasesConfig)
     services.register(databasesConfig)
 
-
     /// Configure migrations
     var migrations = MigrationConfig()
     migrations.add(model: User.self, database: .psql)

@@ -8,6 +8,9 @@ before_install:
     - eval "$(curl -sL https://apt.vapor.sh)"; sudo apt-get update; sudo apt-get install swift vapor
 before_script:
     - psql -c 'create database travis_ci_test;' -U postgres
-script: swift build && swift test
+    - git clone https://github.com/realm/SwiftLint.git && cd SwiftLint && swift build -c release --static-swift-stdlib && sudo mv .build/x86_64-unknown-linux/release/swiftlint /usr/local/bin && cd ..
+script: 
+    - swiftlint
+    - swift build && swift test
 
 

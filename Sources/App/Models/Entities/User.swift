@@ -6,18 +6,20 @@ import Vapor
 final class User: PostgreSQLModel {
     /// User's unique identifier.
     /// Can be `nil` if the user has not been saved yet.
+    // swiftlint:disable:next identifier_name
     var id: Int?
-    
+
     /// User's full name.
     var name: String
-    
+
     /// User's email address.
     var email: String
-    
+
     /// BCrypt hash of the user's password.
     var password: String
-    
+
     /// Creates a new `User`.
+    // swiftlint:disable:next identifier_name
     init(id: Int? = nil, name: String, email: String, password: String) {
         self.id = id
         self.name = name
@@ -25,7 +27,6 @@ final class User: PostgreSQLModel {
         self.password = password
     }
 }
-
 
 /// Allows users to be verified by bearer / token auth middleware.
 extension User: TokenAuthenticatable {
@@ -38,11 +39,11 @@ extension User: Migration {
 
     static func prepare(on conn: PostgreSQLConnection) -> Future<Void> {
         return PostgreSQLDatabase.create(User.self, on: conn) { builder in
-        
+
             try addProperties(to: builder)
-        
+
             builder.unique(on: \.email)
-            
+
         }
     }
 }
