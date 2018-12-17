@@ -3,20 +3,31 @@ import Vapor
 /// Main Class for interacting with  the YelpAPI and the  
 final class BarController {
 
-    func getBars(_ req: Request) throws -> Future<HTTPStatus> {
+    func getBars(_ req: Request) throws -> Future<[Bar]> {
+    
         let api = YelpAPI()
         
-        //try api.getBusiness(on: req)
+        if let city = req.query[String.self, at: "city"] {
+          return try api.getBusinesses(near: city, on: req).map(to: [Bar].self) { resp in
         
-        return try api.getBusinesses(on: req).map(to: HTTPStatus.self) { resp in
-        
-            print(resp)
-            return .ok
+            return resp
             
+          } 
+            
+        
+        } else if let lat = req.query[Double.self, at: "lat"], let long = req.query[Double.self, at: "long"] {
+            
+             return try api.getBusinessesBy(latitude: lat, longitude: long, on: req).map(to: [Bar].self) { resp in
+        
+                return resp
+            
+            } 
+                
+        
+        } else {
+            throw Abort(.badRequest, reason: "Location is required for a search")
         }
         
-    
-       
     }
 
 }
