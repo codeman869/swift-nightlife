@@ -1,5 +1,7 @@
 #!/bin/bash
-SWIFT_LINT=/usr/local/bin/swiftlint
+SWIFT_LINT=swiftlint
+
+command -v $SWIFT_LINT > /dev/null 2>&1 || { echo >&2 "Swiftlint is not installed...."; exit 1; }
 
 FILES=$( git diff --cached --diff-filter=d --name-only | grep ".swift$" ) 
 
