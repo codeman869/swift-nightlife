@@ -25,11 +25,12 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     try databases(config: &databasesConfig)
     services.register(databasesConfig)
 
-
     /// Configure migrations
     var migrations = MigrationConfig()
     migrations.add(model: User.self, database: .psql)
     migrations.add(model: Token.self, database: .psql)
     services.register(migrations)
 
+    services.register(YelpAPI(), as: NightLifeAPI.self)
+    //config.prefer(YelpAPI.self, for: NightLifeAPI.self)
 }
