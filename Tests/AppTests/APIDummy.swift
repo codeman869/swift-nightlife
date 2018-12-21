@@ -23,7 +23,7 @@ final class APIDummy: NightLifeAPI {
     // MARK: - NightLifeAPI Protocol
 
     func getBusinessesBy(latitude lat: Double, longitude long: Double, on worker: Worker) throws -> Future<[Bar]> {
-    
+
         let testBar = self.getBar()
 
         var retArr = [Bar]()
@@ -39,7 +39,7 @@ final class APIDummy: NightLifeAPI {
     }
 
     func getBusinesses(near city: String, matching term: String?, on worker: Worker) throws -> Future<[Bar]> {
-    
+
         let testBar = self.getBar()
 
         var retArr = [Bar]()
@@ -52,15 +52,16 @@ final class APIDummy: NightLifeAPI {
         return promise.futureResult
 
     }
-    
+
     private func getBar() -> Bar {
-    
+
         let coords: Coordinates = Coordinates(lat: 123.773, long: -124.12)
 
         let address = Address(add1: "1234 NE 82nd Ave", city: "San Diego", zip: "92108")
 
-        return Bar(id: APIDummy.barId , name: APIDummy.barName , image: APIDummy.barPic , reviews: APIDummy.reviews, rating: APIDummy.rating,  coords: coords, location: address, phone: APIDummy.barPhone )
-       
+        return Bar(id: APIDummy.barId, name: APIDummy.barName, image: APIDummy.barPic, reviews: APIDummy.reviews,
+                    rating: APIDummy.rating, coords: coords, location: address, phone: APIDummy.barPhone )
+
     }
 
 }

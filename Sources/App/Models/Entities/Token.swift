@@ -35,7 +35,7 @@ final class Token: PostgreSQLModel {
         self.id = id
         self.string = string
         // set token to expire after 5 hours
-        self.expiresAt = Date.init(timeInterval: 60 * 60 * 5, since: .init())
+        self.expiresAt = Date(timeInterval: 60 * 60 * 5, since: .init())
         self.userID = userID
     }
 }

@@ -5,4 +5,13 @@ excluded:
     - .build
     - .git
     - Package.swift
+opt_in_rules:
+    - closing_brace
+    - opening_brace
+    - return_arrow_whitespace
+    - trailing_semicolon
+    - statement_position
+    - explicit_init
+    - shorthand_operator
+    
     

@@ -47,11 +47,13 @@ final class YelpAPI: NightLifeAPI {
 
     }
 
-    private func getBusinessesWith(request req: HTTPRequest, client: HTTPClient, on worker: Worker) throws -> Future<[Bar]> {
+    private func getBusinessesWith(request req: HTTPRequest, client: HTTPClient, on worker: Worker)
+        throws -> Future<[Bar]> {
 
         return client.send(req).flatMap(to: [Bar].self) { response in
 
-            return try JSONDecoder().decode(BusinessContent.self, from: response, maxSize: 1024 * 1024, on: worker).map { business in
+            return try JSONDecoder().decode(BusinessContent.self, from: response,
+                    maxSize: 1024 * 1024, on: worker).map { business in
 
                 return business.businesses
 
@@ -78,6 +80,7 @@ protocol NightLifeAPI: ServiceType {
 }
 
 struct Bar: Content {
+    // swiftlint:disable identifier_name
     var id: String
     var name: String
     var image_url: String
@@ -87,7 +90,9 @@ struct Bar: Content {
     var location: Address
     var phone: String
 
-    init(id: String, name: String, image: String, reviews: Int, rating: Double, coords: Coordinates, location: Address, phone: String) {
+    init(id: String, name: String, image: String, reviews: Int, rating: Double,
+         coords: Coordinates, location: Address, phone: String) {
+
         self.id = id
         self.name = name
         self.image_url = image
@@ -127,3 +132,4 @@ struct Address: Content {
         self.zip_code = zip
     }
 }
+// swiftlint:enable identifier_name
