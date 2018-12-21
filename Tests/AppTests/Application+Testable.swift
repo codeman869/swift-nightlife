@@ -10,10 +10,14 @@ extension Application {
 
         try App.configure(&config, &env, &services)
 
+        services.register(APIDummy(), as: NightLifeAPI.self)
+        config.prefer(APIDummy.self, for: NightLifeAPI.self)
+
         let app = try Application(config: config, environment: env, services: services)
 
         try App.boot(app)
 
+        //print(config)
         return app
 
     }

@@ -5,7 +5,8 @@ import XCTest
 
 XCTMain([
     // AppTests
-    testCase(UserTests.allTests)
+    testCase(UserTests.allTests),
+    testCase(BarControllerTests.allTests)
 ])
 
 #endif

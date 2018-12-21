@@ -31,4 +31,6 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Token.self, database: .psql)
     services.register(migrations)
 
+    services.register(YelpAPI(), as: NightLifeAPI.self)
+    //config.prefer(YelpAPI.self, for: NightLifeAPI.self)
 }
