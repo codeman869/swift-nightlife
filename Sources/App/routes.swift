@@ -11,6 +11,9 @@ public func routes(_ router: Router) throws {
     let barController = BarController()
     router.get("bars", use: barController.getBars)
 
+    let atmosphereController = AtmosphereController()
+    router.post("bars", use: atmosphereController.rateBar)
+
     // basic / password auth protected routes
     /*
     let basic = router.grouped(User.basicAuthMiddleware(using: BCryptDigest()))
