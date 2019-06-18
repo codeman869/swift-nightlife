@@ -52,7 +52,16 @@ final class APIDummy: NightLifeAPI {
         return promise.futureResult
 
     }
+// swiftlint:disable identifier_name
+    func getBusiness(id: String, on worker: Worker) throws -> Future<Bar> {
+        let testBar = self.getBar()
 
+        let promise = worker.eventLoop.newPromise(Bar.self)
+        promise.succeed(result: testBar)
+
+        return promise.futureResult
+    }
+// swiftlint:enable identifier_name
     private func getBar() -> Bar {
 
         let coords: Coordinates = Coordinates(lat: 123.773, long: -124.12)

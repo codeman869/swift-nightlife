@@ -10,6 +10,7 @@ public func routes(_ router: Router) throws {
 
     let barController = BarController()
     router.get("bars", use: barController.getBars)
+    router.get("bars", String.parameter, use: barController.getBar)
 
     let atmosphereController = AtmosphereController()
     router.post("bars", use: atmosphereController.rateBar)

@@ -46,7 +46,33 @@ final class YelpAPI: NightLifeAPI {
        }
 
     }
+// swiftlint:disable identifier_name
+    func getBusiness(id: String, on worker: Worker) throws -> Future<Bar> {
+        guard let token = Environment.get("API_TOKEN") else {
+        print("Unable to determine API Key")
+        throw VaporError(identifier: "No API Key", reason: "API Key is Missing!")
+      }
 
+        return HTTPClient.connect(scheme: .https, hostname: "api.yelp.com", on: worker).flatMap { client in
+            let url = "/v3/businesses/\(id)"
+            var httpRequest = HTTPRequest(method: .GET, url: url, headers: .init())
+            httpRequest.headers.add(name: "Authorization", value: "Bearer \(token)")
+            httpRequest.headers.add(name: "Accept", value: "application/json")
+
+            return client.send(httpRequest).flatMap(to: Bar.self) { response in
+
+                guard response.status == HTTPResponseStatus.ok else {
+                    throw Abort(.badRequest, reason: "Invalid Bar ID")
+                }
+
+                return try JSONDecoder().decode(Bar.self, from: response, maxSize: 1024 * 1024, on: worker)
+
+            }
+
+        }
+
+    }
+// swiftlint:enable identifier_name
     private func getBusinessesWith(request req: HTTPRequest, client: HTTPClient, on worker: Worker)
         throws -> Future<[Bar]> {
 
@@ -71,16 +97,17 @@ final class YelpAPI: NightLifeAPI {
        return YelpAPI()
    }
 }
-
+// swiftlint:disable identifier_name
 protocol NightLifeAPI: ServiceType {
 
     func getBusinessesBy(latitude lat: Double, longitude long: Double, on worker: Worker) throws -> Future<[Bar]>
     func getBusinesses(near city: String, matching term: String?, on worker: Worker) throws -> Future<[Bar]>
+    func getBusiness(id: String, on worker: Worker) throws -> Future<Bar>
 
 }
 
 struct Bar: Content {
-    // swiftlint:disable identifier_name
+
     var id: String
     var name: String
     var image_url: String
