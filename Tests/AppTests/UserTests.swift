@@ -48,7 +48,7 @@ class UserTests: XCTestCase {
 
         let response = try app.sendRequest(to: "/users", method: .POST, body: user)
 
-        let userResponse = try response.content.decode(UserResponse.self).wait()
+        _ = try response.content.decode(UserResponse.self).wait()
 
         let response2 = try app.sendRequest(to: "/users", method: .POST, body: user)
 

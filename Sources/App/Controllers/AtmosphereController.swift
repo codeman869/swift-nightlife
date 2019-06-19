@@ -11,12 +11,18 @@ final class AtmosphereController {
 
                 guard let atmosphere = fetchedAtmosphere else {
                     //Create a new atmosphere
-                    let today = Date()
-                    let newAtmosphere = Atmosphere(barName: "test", barID: "abcd1234", date: today,
+                    // To create a new atmosphere, we have to determine if the BarID is valid.
+
+                    let api = try req.make(NightLifeAPI.self)
+
+                    return try api.getBusiness(id: atmosReq.barID, on: req).flatMap(to: Atmosphere.self) { bar in
+                        let today = Date()
+                        let newAtmosphere = Atmosphere(barName: bar.name, barID: bar.id, date: today,
                                                    busyRating: atmosReq.busyness, awesomeRating: atmosReq.awesomeness,
                                                    votes: 1)
 
-                    return newAtmosphere.save(on: req)
+                        return newAtmosphere.save(on: req)
+                    }
 
                 }
 
@@ -28,12 +34,4 @@ final class AtmosphereController {
         }
 
     }
-}
-
-struct AtmosphereRequest: Codable {
-
-    var barID: String
-    var awesomeness: Double
-    var busyness: Double
-
 }

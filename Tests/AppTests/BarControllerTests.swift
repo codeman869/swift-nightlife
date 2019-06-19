@@ -10,7 +10,9 @@ class BarControllerTests: XCTestCase {
         ("queryReturnsBars", queryReturnsBars),
         ("noLocationIsBadRequest", noLocationIsBadRequest),
         ("locationCanBeLatLong", locationCanBeLatLong),
-        ("latAndLongAreRequired", latAndLongAreRequired)
+        ("latAndLongAreRequired", latAndLongAreRequired),
+        ("getBar returns a bar given an ID", getBarReturnsValidBar),
+        ("Invalid BarID is an error", invalidBarIDIsAnError)
     ]
 
     override func setUp() {
@@ -21,6 +23,25 @@ class BarControllerTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
+
+    }
+
+    func invalidBarIDIsAnError() throws {
+        let response = try app.sendRequest(to: "/bars/\(APIDummy.barId)z", method: .GET, body: "")
+
+        XCTAssertEqual(response.http.status, HTTPStatus.badRequest)
+
+    }
+
+    func getBarReturnsValidBar() throws {
+        let response = try app.sendRequest(to: "/bars/\(APIDummy.barId)", method: .GET, body: "")
+        let bar = try response.content.decode(Bar.self).wait()
+
+        XCTAssertEqual(bar.name, APIDummy.barName)
+        XCTAssertEqual(bar.id, APIDummy.barId)
+        XCTAssertEqual(bar.image_url, APIDummy.barPic)
+        XCTAssertEqual(bar.review_count, APIDummy.reviews)
+        XCTAssertEqual(bar.rating, APIDummy.rating)
 
     }
 
@@ -62,7 +83,7 @@ class BarControllerTests: XCTestCase {
 
         XCTAssertEqual(response.http.status, HTTPStatus.badRequest)
 
-        let response2 = try app.sendRequest(to: "/bars?long=122.39", method: .GET, body: "")
+        _ = try app.sendRequest(to: "/bars?long=122.39", method: .GET, body: "")
 
         XCTAssertEqual(response.http.status, HTTPStatus.badRequest)
     }

@@ -54,6 +54,11 @@ final class APIDummy: NightLifeAPI {
     }
 // swiftlint:disable identifier_name
     func getBusiness(id: String, on worker: Worker) throws -> Future<Bar> {
+
+        guard id == self.getBar().id else {
+            throw Abort(.badRequest, reason: "Invalid BarID")
+        }
+
         let testBar = self.getBar()
 
         let promise = worker.eventLoop.newPromise(Bar.self)

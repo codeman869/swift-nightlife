@@ -33,10 +33,6 @@ final class BarController {
         let api = try req.make(NightLifeAPI.self)
         let barID = try req.parameters.next(String.self)
 
-        guard barID != nil else {
-            throw Abort(.badRequest, reason: "Invalid Bar ID")
-        }
-
         return try api.getBusiness(id: barID, on: req)
     }
 
